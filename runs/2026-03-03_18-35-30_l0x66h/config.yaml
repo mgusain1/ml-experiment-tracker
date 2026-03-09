@@ -1,0 +1,7 @@
+data:
+  n_samples: 100
+  noise: 0.1
+seed: 42
+training:
+  epochs: 50
+  lr: 0.1

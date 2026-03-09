@@ -1,0 +1,10 @@
+name: Demo
+seed: 42
+
+data:
+  n_samples: 100
+  noise: 0.1
+
+training:
+  lr: 0.1
+  epochs: 50
