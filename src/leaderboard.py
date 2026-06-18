@@ -21,6 +21,9 @@ for dir_name in subdirectories:
         config = yaml.safe_load(f)
     with open(metrics_path) as f:
         metrics = json.load(f)
+    if "best_validation_loss" not in metrics or "best_epoch" not in metrics:
+        print(f"Skipping old run without best validation metrics: {directory}")
+        continue
     seed = config["seed"]
     lr = config["training"]["lr"]
     epochs = config["training"]["epochs"]

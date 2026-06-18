@@ -24,6 +24,7 @@ def main():
     parser.add_argument("--noise",type=float,default=None)
     parser.add_argument("--n_samples",type=int,default=None)
     parser.add_argument("--seed",type=int,default=None)
+    parser.add_argument("--sweep_id",default=None)
     args = parser.parse_args()
 
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
@@ -66,7 +67,9 @@ def main():
         "timestamp":datetime.now().isoformat(),
         "git_commit":git_hash,
         "python_version":sys.version,
-        "command":f"python "+ shlex.join(sys.argv) 
+        "command":f"python "+ shlex.join(sys.argv),
+        "sweep_id": args.sweep_id 
+        
     }
 
     config_data = {
