@@ -13,6 +13,8 @@ import shlex
 from data import make_dataset
 from model import get_model
 from trainer import train_model
+from plot import plot_loss
+from sklearn.model_selection import train_test_split
 
 def main():
     parser = argparse.ArgumentParser()
@@ -54,7 +56,8 @@ def main():
             epochs = config["training"]["epochs"]
         torch.manual_seed(seed)
         x, y = make_dataset(n_samples,noise)
-        model,losses = train_model(x,y,lr,epochs)
+        X_train,X_val,y_train,y_val = train_test_split(x,y,test_size=0.2,random_state=42)
+        model,train_losses,val_losses, best_validation_loss, best_epoch = train_model(X_train,X_val,y_train,y_val,lr,epochs,run_folder)
 
     git_hash = subprocess.getoutput("git rev-parse HEAD")
 
@@ -86,14 +89,18 @@ def main():
         
         
     metrics = {
-        "loss": losses,
-        "final_loss":losses[-1]
+        "Training loss": train_losses,
+        "final_training_loss":train_losses[-1],
+        "validation loss":val_losses,
+        "final_validation_loss":val_losses[-1],
+        "best_validation_loss": best_validation_loss,
+        "best_epoch": best_epoch
     }
 
     with open(f"{run_folder}/metrics.json","w") as f:
         json.dump(metrics,f,indent=4)
     torch.save(model.state_dict(), f"{run_folder}/model.pt")
-
+    plot_loss(train_losses,val_losses, run_folder)
     print(f"Run folder created: {run_folder}")
 
 if __name__ == "__main__":

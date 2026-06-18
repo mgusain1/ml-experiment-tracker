@@ -12,7 +12,7 @@ for dir_name in subdirectories:
     metrics_path = directory/"metrics.json"
     config_path = directory/"config.yaml"
     if not metrics_path.exists():
-        print(f"No matricss in {directory}")
+        print(f"No metrics in {directory}")
         continue
     if not config_path.exists():
         print(f"No Config in {directory}")
@@ -24,16 +24,18 @@ for dir_name in subdirectories:
     seed = config["seed"]
     lr = config["training"]["lr"]
     epochs = config["training"]["epochs"]
-    final_loss = metrics["final_loss"]
+    best_validation_loss = metrics["best_validation_loss"]
+    best_epoch = metrics["best_epoch"]
     records.append({
         "run_id":directory,
         "seed":seed,
         "epochs": epochs,
         "Learning_rate":lr,
-        "final_loss":final_loss
+        "best_validation_loss":best_validation_loss,
+        "best_epoch":best_epoch
     })
         
-records = sorted(records,key=lambda x:x["final_loss"])
+records = sorted(records,key=lambda x:x["best_validation_loss"])
 parser = argparse.ArgumentParser()
 parser.add_argument("--top",type=int,default=5,required=False, help="“Show top N runs")
 args = parser.parse_args()
@@ -43,8 +45,8 @@ if not records:
     print("Records is Empty")
 else:
     for r in records[:top]:
-        print(f"Rank {rank}: Run_Id={r['run_id']}, seed={r['seed']}, Learning rate={r['Learning_rate']}, Epochs={r['epochs']}, final loss={r['final_loss']}")
+        print(f"Rank {rank}: Run_Id={r['run_id']}, seed={r['seed']}, Learning rate={r['Learning_rate']}, Epochs={r['epochs']}, Best Epochs={r['best_epoch']}, Best Validation loss={r['best_validation_loss']}")
         rank+=1
-    print(f"Best one is Run_id: {records[0]['run_id']} and Loss: {records[0]['final_loss']}")
+    print(f"Best one is Run_id: {records[0]['run_id']} and Loss: {records[0]['best_validation_loss']}")
     
 
